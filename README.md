@@ -21,34 +21,34 @@ documentation associée.
 
 ```mermaid
 erDiagram
-    PRODUIT ||--o{ VERSION : "possède"
-    VERSION ||--o{ VERSION_SYSTEME_EXPLOITATION : "compatible"
-    SYSTEME_EXPLOITATION ||--o{ VERSION_SYSTEME_EXPLOITATION : "compatible"
-    VERSION_SYSTEME_EXPLOITATION ||--o{ TICKET : "concerne"
-    STATUT ||--o{ TICKET : "qualifie"
+    Produit ||--o{ Version : "possède"
+    Version ||--o{ VersionSystemeExploitation : "compatible"
+    SystemeExploitation ||--o{ VersionSystemeExploitation : "compatible"
+    VersionSystemeExploitation ||--o{ Ticket : "concerne"
+    Statut ||--o{ Ticket : "qualifie"
 
-    PRODUIT {
+    Produit {
         int Id PK
         nvarchar Nom "NOT NULL"
     }
-    VERSION {
+    Version {
         int Id PK
         nvarchar Numero "NOT NULL"
         int ProduitId FK "NOT NULL"
     }
-    SYSTEME_EXPLOITATION {
+    SystemeExploitation {
         int Id PK
         nvarchar Nom "NOT NULL"
     }
-    VERSION_SYSTEME_EXPLOITATION {
+    VersionSystemeExploitation {
         int VersionId PK, FK
         int SystemeExploitationId PK, FK
     }
-    STATUT {
+    Statut {
         int Id PK
         nvarchar Nom "NOT NULL"
     }
-    TICKET {
+    Ticket {
         int Id PK
         date DateCreation "NOT NULL"
         date DateResolution "NULL"
