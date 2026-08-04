@@ -41,8 +41,8 @@ erDiagram
         nvarchar Nom "NOT NULL"
     }
     VERSION_SYSTEME_EXPLOITATION {
-        int VersionId PK-FK
-        int SystemeExploitationId PK-FK
+        int VersionId PK, FK
+        int SystemeExploitationId PK, FK
     }
     STATUT {
         int Id PK
