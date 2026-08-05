@@ -62,6 +62,25 @@ erDiagram
 
 Le schéma est aussi disponible en PDF : [modele-entite-association.pdf](docs/modele-entite-association.pdf).
 
+## Comment lire le schéma (notation « patte d'oie »)
+
+Les petits symboles au bout de chaque trait indiquent la **cardinalité**,
+c'est-à-dire « combien ». On lit chaque relation par ses deux extrémités.
+
+- `||` (deux petites barres) : **exactement un**.
+- `o{` (un rond suivi d'une « patte d'oie », la fourche à trois branches) :
+  **zéro ou plusieurs**. La patte d'oie marque le côté « plusieurs », et le
+  rond juste avant signifie « éventuellement zéro ».
+
+Exemple avec `Produit ||--o{ Version` :
+
+- côté **Produit**, le `||` : un produit et un seul ;
+- côté **Version**, le `o{` : zéro ou plusieurs versions.
+
+Donc **une version appartient à exactement un produit, et un produit possède
+zéro ou plusieurs versions**. Le mot sur le trait (« possède ») nomme la
+relation. La même lecture s'applique à tous les traits du schéma.
+
 ## Description des tables
 
 | Table | Rôle | Points clés |
