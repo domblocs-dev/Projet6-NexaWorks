@@ -22,9 +22,9 @@ documentation associée.
 ```mermaid
 erDiagram
     Produit ||--o{ Version : "possède"
-    Version ||--o{ VersionSystemeExploitation : "compatible"
-    SystemeExploitation ||--o{ VersionSystemeExploitation : "compatible"
-    VersionSystemeExploitation ||--o{ Ticket : "concerne"
+    Version ||--o{ Compatibilite : "compatible"
+    OS ||--o{ Compatibilite : "compatible"
+    Compatibilite ||--o{ Ticket : "concerne"
     Statut ||--o{ Ticket : "qualifie"
 
     Produit {
@@ -36,13 +36,14 @@ erDiagram
         nvarchar Numero "NOT NULL"
         int ProduitId FK "NOT NULL"
     }
-    SystemeExploitation {
+    OS {
         int Id PK
         nvarchar Nom "NOT NULL"
     }
-    VersionSystemeExploitation {
-        int VersionId PK, FK
-        int SystemeExploitationId PK, FK
+    Compatibilite {
+        int Id PK
+        int VersionId FK "NOT NULL"
+        int OSId FK "NOT NULL"
     }
     Statut {
         int Id PK
@@ -55,8 +56,7 @@ erDiagram
         nvarchar Probleme "NOT NULL"
         nvarchar Resolution "NULL"
         int StatutId FK "NOT NULL"
-        int VersionId FK "NOT NULL"
-        int SystemeExploitationId FK "NOT NULL"
+        int CompatibiliteId FK "NOT NULL"
     }
 ```
 
@@ -68,25 +68,26 @@ Le schéma est aussi disponible en PDF : [modele-entite-association.pdf](docs/mo
 |-------|------|-------------|
 | `Produit` | Un logiciel édité par NexaWorks | nom du produit |
 | `Version` | Une version d'un produit | `Numero` (texte), `ProduitId` (clé étrangère vers Produit) |
-| `SystemeExploitation` | Un système d'exploitation | table de référence (6 valeurs) |
-| `VersionSystemeExploitation` | Compatibilité entre une version et un OS | table d'association, clé primaire composite `(VersionId, SystemeExploitationId)` |
+| `OS` | Un système d'exploitation | table de référence (6 valeurs) |
+| `Compatibilite` | Compatibilité entre une version et un OS | table d'association, clé primaire `Id`, unicité sur `(VersionId, OSId)` |
 | `Statut` | État d'un ticket | table de référence (En cours, Résolu) |
-| `Ticket` | Un problème signalé sur une version et un OS | dates, description, résolution, liens vers Statut et vers la combinaison version + OS |
+| `Ticket` | Un problème signalé sur une version et un OS | dates, description, résolution, liens vers Statut et vers la compatibilité (version + OS) |
 
 ## Choix de conception
 
 - **Troisième forme normale.** On ne stocke jamais une donnée qu'on peut
   déduire. Le produit d'un ticket n'est pas enregistré directement : on le
-  retrouve en remontant du ticket vers sa version, puis de la version vers son
-  produit.
+  retrouve en remontant du ticket vers sa compatibilité, puis vers la version,
+  puis vers le produit.
 - **Relation plusieurs-à-plusieurs entre version et OS.** Une version tourne
   sur plusieurs OS et un OS concerne plusieurs versions. Cette relation est
-  portée par la table d'association `VersionSystemeExploitation`, où chaque
-  ligne représente une compatibilité.
-- **Clé étrangère composite sur le ticket.** Les colonnes `VersionId` et
-  `SystemeExploitationId` d'un ticket forment ensemble une clé étrangère vers
-  la table d'association. Cela garantit qu'un ticket ne peut concerner qu'un
-  couple version + OS réellement compatible.
+  portée par la table d'association `Compatibilite`, où chaque ligne représente
+  une compatibilité. Sa clé primaire est un identifiant unique `Id`, et une
+  contrainte d'unicité sur `(VersionId, OSId)` interdit les doublons.
+- **Une seule clé étrangère sur le ticket.** Le ticket pointe vers une ligne de
+  `Compatibilite` via `CompatibiliteId`. Comme cette ligne représente un couple
+  version + OS déjà validé, on garantit qu'un ticket ne concerne qu'une
+  combinaison réellement compatible, tout en gardant le ticket simple.
 - **Numéro de version en texte.** Un numéro comme « 1.2 » n'est pas un nombre
   (« 1.10 » vient après « 1.9 » et n'égale pas « 1.1 »). C'est une étiquette,
   donc du texte.
