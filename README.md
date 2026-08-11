@@ -112,3 +112,52 @@ relation. La même lecture s'applique à tous les traits du schéma.
   donc du texte.
 - **Dates au jour près.** Les tickets sont datés au jour (type `date`). Les
   données fournies et les requêtes demandées ne nécessitent pas l'heure.
+
+## Technologies
+
+- **.NET 10** et **C#**
+- **Entity Framework Core 10**, approche **Code-First** (les classes C# décrivent
+  les tables, EF Core génère la base)
+- **SQL Server LocalDB** comme moteur de base de données
+- Requêtes en **LINQ** et en **procédures stockées T-SQL**
+
+## Installation et exécution
+
+Prérequis : le SDK **.NET 10**, une instance **SQL Server LocalDB**, et l'outil
+Entity Framework Core (`dotnet tool install --global dotnet-ef`).
+
+```bash
+cd src/NexaWorks.Data
+dotnet ef database update   # crée la base NexaWorks sur LocalDB (applique la migration)
+dotnet run                  # remplit la base puis affiche la démonstration des 20 requêtes
+```
+
+- `dotnet ef database update` applique la migration et crée le schéma.
+- `dotnet run` remplit la base (données de référence et 25 tickets) puis exécute
+  la démonstration des 20 requêtes.
+
+## Les requêtes
+
+Les 20 requêtes demandées ne diffèrent que par cinq critères (statut, produit,
+version, période, mots-clés). Elles sont donc optimisées en **une seule requête
+paramétrée**, où chaque critère est un paramètre optionnel : un paramètre laissé
+vide est ignoré. Elle est fournie de deux façons :
+
+- **LINQ** : la méthode `ObtenirTickets` dans `src/NexaWorks.Data/Requetes.cs`.
+- **Procédure stockée** : `ObtenirTickets` dans `sql/ObtenirTickets.sql`.
+
+La démonstration des 20 demandes est faite par le programme (`dotnet run`) et par
+le script `sql/Demo-20-requetes.sql`. Le détail (but, paramètres, résultats) est
+dans `docs/Documentation-des-requetes-NexaWorks.xlsx`.
+
+## Sauvegarde de la base (dump)
+
+Une sauvegarde complète est fournie dans `sql/NexaWorks.bak` (produite par le
+script `sql/Backup-Database_NexaWorks.sql`). Pour la restaurer sur une instance
+SQL Server :
+
+```sql
+RESTORE DATABASE NexaWorks
+FROM DISK = 'C:\chemin\vers\NexaWorks.bak'
+WITH REPLACE;
+```
