@@ -12,6 +12,7 @@ obj/
 # Fichiers temporaires
 *.tmp
 *.log
+~$*
 
 # Documents de travail personnels (gardés en local, hors dépôt en ligne)
 docs/notes-modelisation.md
