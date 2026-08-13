@@ -5,6 +5,8 @@ NexaWorks, destinée à suivre les problèmes (tickets) rencontrés sur ses
 logiciels, version par version et système d'exploitation par système
 d'exploitation.
 
+**Auteur : Dominique**
+
 ## Contexte
 
 NexaWorks édite plusieurs produits logiciels. Chaque produit existe en
